@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@@HiltViewModel
+@HiltViewModel
 class CompanyListingsViewModel @Inject constructor(
     private val repository: StockRepository
 ): ViewModel() {
@@ -21,6 +21,10 @@ class CompanyListingsViewModel @Inject constructor(
     var state by mutableStateOf(CompanyListingsState())
 
     private var searchJob: Job? = null
+
+    init {
+        getCompanyListings()
+    }
 
     fun onEvent(event: CompanyListingsEvent) {
         when(event) {
