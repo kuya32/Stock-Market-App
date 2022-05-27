@@ -2,8 +2,10 @@ package com.github.kuya32.stockmarketapp.di
 
 import com.github.kuya32.stockmarketapp.data.csv.CSVParser
 import com.github.kuya32.stockmarketapp.data.csv.CompanyListingParser
+import com.github.kuya32.stockmarketapp.data.csv.IntradayInfoParser
 import com.github.kuya32.stockmarketapp.data.repository.StockRepositoryImpl
 import com.github.kuya32.stockmarketapp.domain.model.CompanyListing
+import com.github.kuya32.stockmarketapp.domain.model.IntradayInfo
 import com.github.kuya32.stockmarketapp.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
@@ -20,6 +22,12 @@ abstract class RepositoryModule {
     abstract fun bindCompanyListingsParser(
         companyListingParser: CompanyListingParser
     ): CSVParser<CompanyListing>
+
+    @Binds
+    @Singleton
+    abstract fun bindIntradayInfoParser(
+        intradayInfoParser: IntradayInfoParser
+    ): CSVParser<IntradayInfo>
 
     @Binds
     @Singleton
