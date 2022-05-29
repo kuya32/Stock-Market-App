@@ -19,14 +19,19 @@ class CompanyInfoViewModel @Inject constructor(
     private val repository: StockRepository
 ): ViewModel() {
 
+    private lateinit var symbol: String
     var state by mutableStateOf(CompanyInfoState())
 
     init {
+        getCompanyInfoRemote()
+    }
+
+    private fun getCompanyInfoRemote(fetchFromRemote: Boolean = false) {
         viewModelScope.launch {
-            val symbol = savedStateHandle.get<String>("symbol") ?: return@launch
+            symbol = savedStateHandle.get<String>("symbol") ?: return@launch
             state = state.copy(isLoading = true)
-            val companyInfoResult = async { repository.getCompanyInfo(symbol) }
-            val intradayInfoResult = async { repository.getIntradayInfo(symbol) }
+            val companyInfoResult = async { repository.getCompanyInfo(fetchFromRemote, symbol) }
+            val intradayInfoResult = async { repository.getIntradayInfo(fetchFromRemote, symbol) }
             when(val result = companyInfoResult.await()) {
                 is Resource.Success -> {
                     state = state.copy(
@@ -62,5 +67,9 @@ class CompanyInfoViewModel @Inject constructor(
                 else -> Unit
             }
         }
+    }
+
+    private fun getCompanyInfoDb(fetchFromRemote: Boolean) {
+
     }
 }

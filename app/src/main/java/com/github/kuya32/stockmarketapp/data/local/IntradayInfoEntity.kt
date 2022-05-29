@@ -6,7 +6,8 @@ import java.time.LocalDateTime
 
 @Entity
 data class IntradayInfoEntity(
-    val date: LocalDateTime,
+    val date: String,
     val close: Double,
+    var symbol: String,
     @PrimaryKey val id: Int? = null
 )

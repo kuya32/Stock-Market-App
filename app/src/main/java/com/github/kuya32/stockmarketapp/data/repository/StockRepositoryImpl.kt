@@ -6,6 +6,7 @@ import com.github.kuya32.stockmarketapp.data.local.StockDatabase
 import com.github.kuya32.stockmarketapp.data.mapper.toCompanyInfo
 import com.github.kuya32.stockmarketapp.data.mapper.toCompanyListing
 import com.github.kuya32.stockmarketapp.data.mapper.toCompanyListingEntity
+import com.github.kuya32.stockmarketapp.data.mapper.toIntradayInfoEntity
 import com.github.kuya32.stockmarketapp.data.remote.StockApi
 import com.github.kuya32.stockmarketapp.domain.model.CompanyInfo
 import com.github.kuya32.stockmarketapp.domain.model.CompanyListing
@@ -73,10 +74,19 @@ class StockRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getIntradayInfo(symbol: String): Resource<List<IntradayInfo>> {
-        return try {
+    override suspend fun getIntradayInfo(
+        fetchFromRemote: Boolean,
+        symbol: String
+    ): Resource<List<IntradayInfo>> {
+
+
+        val remoteIntradayListings = try {
             val response = api.getIntradayInfo(symbol)
             val results = intradayInfoParser.parse(response.byteStream())
+            dao.insertIntradayInfoListings(
+                symbol = symbol,
+                intradayListingEntities = results.map { it.toIntradayInfoEntity() }
+            )
             Resource.Success(results)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -89,9 +99,16 @@ class StockRepositoryImpl @Inject constructor(
                 message = "Couldn't load intraday info"
             )
         }
+
+
+
+        return remoteIntradayListings
     }
 
-    override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfo> {
+    override suspend fun getCompanyInfo(
+        fetchFromRemote: Boolean,
+        symbol: String
+    ): Resource<CompanyInfo> {
         return try {
             val result = api.getCompanyInfo(symbol)
             Resource.Success(result.toCompanyInfo())
