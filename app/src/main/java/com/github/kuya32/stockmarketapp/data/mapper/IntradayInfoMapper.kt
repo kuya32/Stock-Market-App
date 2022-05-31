@@ -24,7 +24,7 @@ fun IntradayInfoEntity.toIntradayInfo(): IntradayInfo {
     val localDateTime = LocalDateTime.parse(date, formatter)
     return IntradayInfo(
         date = localDateTime,
-        close = close,
+        close = close.toDouble(),
         symbol = symbol
     )
 }
@@ -32,7 +32,7 @@ fun IntradayInfoEntity.toIntradayInfo(): IntradayInfo {
 fun IntradayInfo.toIntradayInfoEntity(): IntradayInfoEntity {
     return IntradayInfoEntity(
         date = date.toString(),
-        close = close,
+        close = close.toString(),
         symbol = symbol
     )
 }

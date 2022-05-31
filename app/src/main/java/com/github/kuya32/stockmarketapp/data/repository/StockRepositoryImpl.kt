@@ -2,11 +2,9 @@ package com.github.kuya32.stockmarketapp.data.repository
 
 import com.github.kuya32.stockmarketapp.data.csv.CSVParser
 import com.github.kuya32.stockmarketapp.data.csv.IntradayInfoParser
+import com.github.kuya32.stockmarketapp.data.local.IntradayInfoEntity
 import com.github.kuya32.stockmarketapp.data.local.StockDatabase
-import com.github.kuya32.stockmarketapp.data.mapper.toCompanyInfo
-import com.github.kuya32.stockmarketapp.data.mapper.toCompanyListing
-import com.github.kuya32.stockmarketapp.data.mapper.toCompanyListingEntity
-import com.github.kuya32.stockmarketapp.data.mapper.toIntradayInfoEntity
+import com.github.kuya32.stockmarketapp.data.mapper.*
 import com.github.kuya32.stockmarketapp.data.remote.StockApi
 import com.github.kuya32.stockmarketapp.domain.model.CompanyInfo
 import com.github.kuya32.stockmarketapp.domain.model.CompanyListing
@@ -79,14 +77,18 @@ class StockRepositoryImpl @Inject constructor(
         symbol: String
     ): Resource<List<IntradayInfo>> {
 
-
         val remoteIntradayListings = try {
             val response = api.getIntradayInfo(symbol)
             val results = intradayInfoParser.parse(response.byteStream())
-            dao.insertIntradayInfoListings(
-                symbol = symbol,
-                intradayListingEntities = results.map { it.toIntradayInfoEntity() }
-            )
+            results.let { listings ->
+                dao.insertIntradayInfoListings(
+                    intradayListingEntities = listings
+                        .onEach { entity ->
+                            entity.symbol = symbol
+                        }
+                        .map { it.toIntradayInfoEntity() }
+                )
+            }
             Resource.Success(results)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -100,8 +102,6 @@ class StockRepositoryImpl @Inject constructor(
             )
         }
 
-
-
         return remoteIntradayListings
     }
 
@@ -111,6 +111,7 @@ class StockRepositoryImpl @Inject constructor(
     ): Resource<CompanyInfo> {
         return try {
             val result = api.getCompanyInfo(symbol)
+            dao.insertCompanyInfo(result.toCompanyInfo().toCompanyInfoEntity())
             Resource.Success(result.toCompanyInfo())
         } catch (e: IOException) {
             e.printStackTrace()
