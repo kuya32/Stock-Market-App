@@ -19,9 +19,7 @@ fun IntradayInfoDto.toIntradayInfo(): IntradayInfo {
 }
 
 fun IntradayInfoEntity.toIntradayInfo(): IntradayInfo {
-    val pattern = "yyyy-MM-dd HH:mm:ss"
-    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
-    val localDateTime = LocalDateTime.parse(date, formatter)
+    val localDateTime = LocalDateTime.parse(date)
     return IntradayInfo(
         date = localDateTime,
         close = close.toDouble(),

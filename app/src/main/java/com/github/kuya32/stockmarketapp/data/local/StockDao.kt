@@ -35,8 +35,15 @@ interface StockDao {
     )
     suspend fun searchCompanyListing(query: String): List<CompanyListingEntity>
 
+    @Query("SELECT * FROM intradayinfoentity WHERE symbol == :symbol")
+    suspend fun searchCompanyIntradayInfoListing(symbol: String): List<IntradayInfoEntity>
 
+    @Query("SELECT * FROM companyinfoentity WHERE symbol == :symbol")
+    suspend fun searchCompanyInfo(symbol: String): CompanyInfoEntity
 
-//    @Query("DELETE FROM intradayinfoentity WHERE symbol == :symbol")
-//    suspend fun deleteIntraInfoInstance(symbol: String)
+    @Query("DELETE FROM intradayinfoentity WHERE symbol == :symbol")
+    suspend fun deleteIntradayInfoInstance(symbol: String)
+
+    @Query("DELETE FROM companyinfoentity WHERE symbol == :symbol")
+    suspend fun deleteCompanyInfoInstance(symbol: String)
 }

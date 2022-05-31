@@ -77,10 +77,19 @@ class StockRepositoryImpl @Inject constructor(
         symbol: String
     ): Resource<List<IntradayInfo>> {
 
+        val localListings = dao.searchCompanyIntradayInfoListing(symbol)
+
+        val isListingsEmpty = localListings.isEmpty()
+        val shouldJustLoadFromCache = !isListingsEmpty && !fetchFromRemote
+        if (shouldJustLoadFromCache) {
+            return Resource.Success(localListings.map { it.toIntradayInfo() })
+        }
+
         val remoteIntradayListings = try {
             val response = api.getIntradayInfo(symbol)
             val results = intradayInfoParser.parse(response.byteStream())
             results.let { listings ->
+                dao.deleteIntradayInfoInstance(symbol)
                 dao.insertIntradayInfoListings(
                     intradayListingEntities = listings
                         .onEach { entity ->
@@ -109,8 +118,15 @@ class StockRepositoryImpl @Inject constructor(
         fetchFromRemote: Boolean,
         symbol: String
     ): Resource<CompanyInfo> {
+
+        val localCompanyInstance = dao.searchCompanyInfo(symbol)
+
+
+
+
         return try {
             val result = api.getCompanyInfo(symbol)
+            dao.deleteCompanyInfoInstance(symbol)
             dao.insertCompanyInfo(result.toCompanyInfo().toCompanyInfoEntity())
             Resource.Success(result.toCompanyInfo())
         } catch (e: IOException) {
