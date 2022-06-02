@@ -119,9 +119,12 @@ class StockRepositoryImpl @Inject constructor(
         symbol: String
     ): Resource<CompanyInfo> {
 
-        val localCompanyInstance = dao.searchCompanyInfo(symbol)
-
-
+        val isCompanyInfoCached = dao.doesCompanyInfoExist(symbol)
+        val shouldJustLoadFromCache = isCompanyInfoCached && !fetchFromRemote
+        if (shouldJustLoadFromCache) {
+            val localCompanyInstance = dao.searchCompanyInfo(symbol)
+            return Resource.Success(localCompanyInstance.toCompanyInfo())
+        }
 
 
         return try {

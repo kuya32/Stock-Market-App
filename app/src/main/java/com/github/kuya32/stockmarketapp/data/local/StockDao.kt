@@ -41,6 +41,9 @@ interface StockDao {
     @Query("SELECT * FROM companyinfoentity WHERE symbol == :symbol")
     suspend fun searchCompanyInfo(symbol: String): CompanyInfoEntity
 
+    @Query("SELECT EXISTS(SELECT * FROM companyinfoentity WHERE symbol == :symbol)")
+    suspend fun doesCompanyInfoExist(symbol: String): Boolean
+
     @Query("DELETE FROM intradayinfoentity WHERE symbol == :symbol")
     suspend fun deleteIntradayInfoInstance(symbol: String)
 
