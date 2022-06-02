@@ -1,5 +1,6 @@
 package com.github.kuya32.stockmarketapp.data.mapper
 
+import com.github.kuya32.stockmarketapp.data.local.CompanyInfoEntity
 import com.github.kuya32.stockmarketapp.data.local.CompanyListingEntity
 import com.github.kuya32.stockmarketapp.data.remote.dto.CompanyInfoDto
 import com.github.kuya32.stockmarketapp.domain.model.CompanyInfo
@@ -28,5 +29,25 @@ fun CompanyInfoDto.toCompanyInfo(): CompanyInfo {
         name = name ?: "",
         country = country ?: "",
         industry = industry ?: ""
+    )
+}
+
+fun CompanyInfo.toCompanyInfoEntity(): CompanyInfoEntity {
+    return CompanyInfoEntity(
+        symbol = symbol,
+        description = description,
+        name = name,
+        country = country,
+        industry = industry
+    )
+}
+
+fun CompanyInfoEntity.toCompanyInfo(): CompanyInfo {
+    return CompanyInfo(
+        symbol = symbol,
+        description = description,
+        name = name,
+        country = country,
+        industry = industry
     )
 }

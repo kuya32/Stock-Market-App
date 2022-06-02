@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Stock Market App</string>
+    <string name="refesh_button">Refresh button</string>
 </resources>

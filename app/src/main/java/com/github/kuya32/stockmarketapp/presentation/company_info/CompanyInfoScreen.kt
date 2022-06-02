@@ -1,7 +1,9 @@
 package com.github.kuya32.stockmarketapp.presentation.company_info
 
 import android.widget.Space
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -12,12 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.github.kuya32.stockmarketapp.R
 import com.github.kuya32.stockmarketapp.ui.theme.DarkBlue
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -36,13 +43,24 @@ fun CompanyInfoScreen(
                 .padding(16.dp)
         ) {
            state.company?.let { company ->
-               Text(
-                   text = company.name,
-                   fontWeight = FontWeight.Bold,
-                   fontSize = 18.sp,
-                   overflow = TextOverflow.Ellipsis,
+               Row(
+                   horizontalArrangement = Arrangement.SpaceBetween,
                    modifier = Modifier.fillMaxWidth()
-               )
+               ) {
+                   Text(
+                       text = company.name,
+                       fontWeight = FontWeight.Bold,
+                       fontSize = 18.sp,
+                       overflow = TextOverflow.Ellipsis,
+                   )
+                   Image(
+                       painter = painterResource(id = R.drawable.ic_refresh),
+                       contentDescription = stringResource(id = R.string.refesh_button),
+                       modifier = Modifier
+                           .size(24.dp)
+                           .clickable { viewModel.onEvent(CompanyInfoEvent.Refresh) }
+                   )
+               }
                Spacer(modifier = Modifier.height(8.dp))
                Text(
                    text = company.symbol,
