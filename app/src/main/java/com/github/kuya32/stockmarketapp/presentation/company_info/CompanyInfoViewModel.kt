@@ -26,6 +26,14 @@ class CompanyInfoViewModel @Inject constructor(
         getCompanyInfoRemote()
     }
 
+    fun onEvent(event: CompanyInfoEvent) {
+        when (event) {
+            is CompanyInfoEvent.Refresh -> {
+                getCompanyInfoRemote(fetchFromRemote = true)
+            }
+        }
+    }
+
     private fun getCompanyInfoRemote(fetchFromRemote: Boolean = false) {
         viewModelScope.launch {
             symbol = savedStateHandle.get<String>("symbol") ?: return@launch
@@ -67,9 +75,5 @@ class CompanyInfoViewModel @Inject constructor(
                 else -> Unit
             }
         }
-    }
-
-    private fun getCompanyInfoDb(fetchFromRemote: Boolean) {
-
     }
 }

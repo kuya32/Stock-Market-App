@@ -122,12 +122,13 @@ class StockRepositoryImpl @Inject constructor(
         val isCompanyInfoCached = dao.doesCompanyInfoExist(symbol)
         val shouldJustLoadFromCache = isCompanyInfoCached && !fetchFromRemote
         if (shouldJustLoadFromCache) {
+            println("Grabbing from db")
             val localCompanyInstance = dao.searchCompanyInfo(symbol)
             return Resource.Success(localCompanyInstance.toCompanyInfo())
         }
 
-
         return try {
+            println("Grabbing from remote")
             val result = api.getCompanyInfo(symbol)
             dao.deleteCompanyInfoInstance(symbol)
             dao.insertCompanyInfo(result.toCompanyInfo().toCompanyInfoEntity())
@@ -144,5 +145,4 @@ class StockRepositoryImpl @Inject constructor(
             )
         }
     }
-
 }
